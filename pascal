@@ -1,5 +1,5 @@
 program tp2;
-//Luciana Maciel - Comisión 107
+//Maciel Luciana, Medina Tomas, Lopez Branco - Comisión 107
 uses crt;
 const 
    claveEmp = '1';
@@ -40,7 +40,7 @@ var
    contEmp : array [1..4] of integer;
 
    // Generales
-   i, cont, posicion, mayor, n : integer;
+   i, cont, posicion, mayor, n, posi : integer;
    codCIUDAD_GBL : string[3];
 
 
@@ -169,6 +169,10 @@ begin
          repeat
             write('Ingrese codigo de ciudad: ');
             readln(cod_Ciudad);
+            if validacionCiudad(cod_Ciudad) then
+            begin
+               writeln('ingrese otro codigo, ese codigo ya fue cargado');
+            end;
          until (validacionCiudad(cod_Ciudad) = false);
          if cod_Ciudad <> '*' then
          begin
@@ -189,6 +193,11 @@ begin
       begin
          writeln(codCiudad[i],' - ', nomCiudad[i]);
       end;
+   end;
+   for i := 1 to 4 do
+   begin
+      if codCiudad[i] = codEC[i,2] then
+         contEmp[i] += 1;
    end;
    write('Presione una tecla para continuar.. ');
    readkey();
@@ -341,19 +350,16 @@ begin
          write('Ingrese codigo de ciudad: ');
          readln(cod_ciudad);
       until buscarPosDico(cod_ciudad) = true;
+      for i := 1 to 4 do
+      begin
+         if codCiudad[i] = cod_ciudad then
+            contEmp[i] += 1;
+      end;
    end;
    begin
    textcolor(green);
    writeln('La empresa fue cargada correctamente');
    textcolor(yellow);
-   end;
-   for i := 1 to 4 do
-   begin
-      if contEmp[i] > mayor then
-      begin
-         mayor := contEmp[i];
-         posicion := i;
-      end;
    end;
 end;
 
@@ -361,15 +367,13 @@ end;
 procedure altaEmpresas;
 var
    cod_empresa : string[3];
-   pos: integer;
 begin
    clrscr;
-   pos := 0;
    posicion := 0;
    for i := 1 to 4 do
       contEmp[i] := 0;
    repeat
-      if pos <= 4 then
+      if posi < 4 then
       begin
          repeat
             write('Ingrese el codigo de empresa: ');
@@ -379,13 +383,14 @@ begin
          until (validacionEmpresa(cod_empresa) = false);
          if (cod_empresa <> '*')  then
          begin
-            pos := buscarPosVacia;
-            cargaEmpresa(cod_empresa,pos);
+            posi := buscarPosVacia;
+            cargaEmpresa(cod_empresa,posi);
             writeln('');
          end;
       end
       else
       begin
+         writeln('Ya no se permite cargar mas empresa');
          cod_empresa := '*';
       end;
    until (cod_empresa = '*');
@@ -397,7 +402,19 @@ begin
          writeln();
          writeln(codCiudad[i] ,' - ' , nomCiudad[i], ' - ' , contEmp[i]);
       end;
-      readkey;
+   end;
+   for i := 1 to 4 do
+   begin
+      if codCiudad[i] = codEC[i,2] then
+         contEmp[i] += 1;
+   end;
+   for i := 1 to 4 do
+   begin
+      if contEmp[i] > mayor then
+      begin
+         mayor := contEmp[i];
+         posicion := i;
+      end;
    end;
    if mayor > 0 then
    begin
@@ -406,6 +423,14 @@ begin
       writeln ('Codigo: ', codCiudad[posicion] , '  Nombre: ', nomCiudad[posicion], '  Cantidad de empresas: ', mayor);
       readkey();
    end;
+   for i := 1 to 4 do
+   begin
+      if codEC[i,1] <> '' then
+      begin
+         writeln(codEC[i,1], ' ', codEC[i,2], ' ', datosEmp[i,1],' ', datosEmp[i,2], ' ' , datosEmp[i,3], ' ', datosEmp[i,4]);
+      end;
+   end;
+   readkey;
 end;
 
 
@@ -469,10 +494,10 @@ begin
          pos := buscarPosVaciaCodPro;
          codECP[pos,1] := codPROYECTO;
 
-         cont := buscarPosVacia;
+         posi := buscarPosVacia;
          write('Ingrese el codigo de empresa: ');
          readln(codEMPRESA);
-         if (buscar(codEMPRESA,1)) and (codEMPRESA <> '*') then
+         if (posi > 0) and (posi < 5) and (buscar(codEMPRESA,1)) and (codEMPRESA <> '*') then
          begin
             codECP[pos,2] := codEMPRESA;
 
@@ -513,10 +538,10 @@ begin
             etapatipo[pos,2] := tipo;
 
          end
-         else if (codEMPRESA <> '*') and (cont <= 4) and (cont > 0) and (buscar(codEMPRESA,1) = false) then 
+         else if (codEMPRESA <> '*') and (posi <= 4) and (posi > 0) and (buscar(codEMPRESA,1) = false) then 
          begin
             writeln('El codigo de Empresa no existe, por favor ingrese dicha empresa a continuacion');
-            cargaEmpresa(codEMPRESA, cont);
+            cargaEmpresa(codEMPRESA, posi);
             codECP[pos,2] := codEMPRESA;
             codECP[pos,3] := codCIUDAD_GBL;
 
@@ -533,7 +558,7 @@ begin
             etapatipo[pos,2] := tipo;
 
          end
-         else if (cont = 0) or (cont > 4) then
+         else if (posi = 0) or (posi > 4) then
          begin
             write('No es posible cargar dicha empresa');
             writeln('Porfabor ingrese uno de los siguientes codigo de empresa: ');
@@ -673,7 +698,7 @@ end;
 
 function buscarTipoDeProyecto(t : char): boolean;
 var
-   pos,j: integer;
+   j: integer;
    codEmp, codCiu: string[3];
    bandera, found:boolean;
 begin
@@ -823,6 +848,7 @@ end;
 
 begin
    mayor := 0;
+   posi := 0;
    cont := 0;
    for i := 1 to 4 do
    begin
