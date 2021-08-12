@@ -22,29 +22,17 @@ type
    tDatosCli = array [1..4 , 1..2] of string[40];
 
 var
-   // Ciudades
-   codCiudad: tCodCiudades;
+   codCiudad: tCodCiudades;   //Ciudades
    nomCiudad: tNomCiudades;
-
-   // Empresas
-   codEC: tCodEC;
+   codEC: tCodEC;             //Empresas
    datosEmp: tDatosEmp;
-
-   // Proyectos
-   codECP: tCodECP;
+   cantidad: tCant;           //Proyectos
+   codECP: tCodECP; 
    etapatipo: tEtapaTipo;
-   cantidad: tCant;
-
-   // Clientes
-   datosCli: tDatosCli;
+   datosCli: tDatosCli;       //Clientes
    contEmp : array [1..4] of integer;
-
-   // Generales
    i, cont, posicion, mayor, n : integer;
-   codCIUDAD_GBL : string[3];
 
-
-// Valida Clave
 function validacionClave(x : string) : string;
 var
    clave, ocult : string;
@@ -84,7 +72,7 @@ begin
 
 end;
 
-// Valida Código de Ciudad
+//aca con ciudad
 
 function validacionCiudad(x : string): boolean;
 var
@@ -101,7 +89,6 @@ begin
    validacionCiudad := bandera
 end;
 
-// Ordenamiento Ascendente
 procedure ordenarAscendente;
 var
    i,j: integer;
@@ -125,38 +112,21 @@ begin
    end;
 end;
 
-// Busca Posición Vacía en el Arreglo codCiudad (Ciudades)
-function buscarPosVaciaCiudad : integer;
-var
-   pos : integer;
-begin
-   i := 0;
-   repeat
-      i +=1;
-      if codCiudad[i] = '' then
-      begin
-         pos:=i;
-      end;
-   until (i <= 4) and (codCiudad[i] ='');
-   buscarPosVaciaCiudad := pos;
-end;
-
-// Carga Ciudad
 procedure cargaCiudad(x : string);
-var
-   pos:integer;
 begin
-   pos := buscarPosVaciaCiudad;
-   if codCiudad[pos] = '' then
+   while (x <>'*') do 
    begin
-      codCiudad[pos] := x;
-      write('Ingrese nombre de ciudad: ');
-      readln(nomCiudad[pos]);
+      if codCiudad[1] = '' then
+      begin
+         codCiudad[1] := x;
+         write('Ingrese nombre de ciudad: ');
+         readln(nomCiudad[1]);
+      end;
+      x := '*';
    end;
    ordenarAscendente();
 end;
 
-// Alta Ciudad
 procedure altaCiudades;
 var
    cod_Ciudad : String[3];
@@ -192,7 +162,8 @@ begin
    readkey();
 end;
 
-// Valida Código de Empresa
+//aca empieza con empresas
+
 function validacionEmpresa(x : string): Boolean;
 var
    bandera: boolean;
@@ -209,7 +180,6 @@ begin
    validacionEmpresa := bandera;
 end;
 
-// Busca Posición Vacía en el Arreglo codEC (Empresas - Ciudades)
 function buscarPosVacia : integer;
 var
    pos : integer;
@@ -225,7 +195,6 @@ begin
    buscarPosVacia := pos;
 end;
 
-// Búsqueda Dicotómica
 function buscarPosDico(x : string) : Boolean;
 var
    inicio, fin, medio : Integer;
@@ -256,7 +225,6 @@ begin
    end;
 end;
 
-// Busca en el arreglo codEC
 function buscar(x : string; x_2 : integer): boolean;
 var
    bandera: boolean;
@@ -272,42 +240,34 @@ begin
    buscar :=bandera;
 end;
 
-// Carga Empresa
 procedure cargaEmpresa(x : string; x_2  : integer);
 var
    cod_ciudad : string[3];
    nombreEmpresa, correo, direccion, telefono : String[40];
 begin
-   // Código de Empresa
    codEC[x_2,1] := x;
-
    repeat
       write('Ingrese el nombre de la empresa: ');
       readln(nombreEmpresa);
    until (buscar(nombreEmpresa,1) = false);
    datosEmp[x_2,1] := nombreEmpresa;
-
    repeat
       write('Ingrese la direccion de la empresa: ');
       readln(direccion);
    until (buscar(direccion,2) = false);
    datosEmp[x_2,2] := direccion;
-
    repeat
       write('Ingrese el correo de la empresa: ');
       readln(correo);
    until (buscar(correo,3) = false);
    datosEmp[x_2,3] := correo;
-
    repeat
       write('Ingrese el telefono de la empresa: ');
       readln(telefono);
    until (buscar(telefono,4) = false);
    datosEmp[x_2,4] := telefono;
-
    write('Ingrese codigo de ciudad: ');
    readln(cod_ciudad);
-   codCIUDAD_GBL := cod_ciudad; //Hardcodeo AFA
    if (buscarPosDico(cod_ciudad)) then
    begin
       codEC[x_2,2] := cod_ciudad;
@@ -353,7 +313,6 @@ begin
    end;
 end;
 
-// Alta Empresas
 procedure altaEmpresas;
 var
    cod_empresa : string[3];
@@ -398,9 +357,9 @@ begin
    end;
 end;
 
+//aca con proyectos
 
-// Busca en el Arreglo codECP (Empresa - Ciudad - Proyecto)
-function buscarECP(x : string; x_2 : integer): boolean;
+function buscarCE(x : string; x_2 : integer): boolean;
 var
    bandera: boolean;
 begin
@@ -412,10 +371,9 @@ begin
          bandera := true;
       end;
    end;
-   buscarECP := bandera;
+   buscarCE := bandera;
 end;
 
-// Busca Posición Vacia en el Arreglo codECP (Empresas - Ciudades - Proyectos)
 function buscarPosVaciaCodPro : integer;
 var
    pos : integer;
@@ -431,7 +389,6 @@ begin
    buscarPosVaciaCodPro := pos;
 end;
 
-// Alta de Productos
 procedure altaProductos;
 begin
      clrscr;
@@ -440,7 +397,7 @@ begin
      readkey;
 end;
 
-// Alta de Proyectos
+
 procedure altaProyectos;
 var
    codPROYECTO, codEMPRESA, codCIUDAD: string[3];
@@ -452,27 +409,24 @@ begin
       repeat
          write('Ingrese el codigo de proyecto: ');
          readln(codPROYECTO);
-      until buscarECP(codPROYECTO,1) = false;
+      until buscarCE(codPROYECTO,1) = false;
       if codPROYECTO <> '*' then
       begin
-
          pos := buscarPosVaciaCodPro;
          codECP[pos,1] := codPROYECTO;
-
          cont := buscarPosVacia;
          write('Ingrese el codigo de empresa: ');
          readln(codEMPRESA);
          if (buscar(codEMPRESA,1)) and (codEMPRESA <> '*') then
          begin
             codECP[pos,2] := codEMPRESA;
-
             writeln('Ingrese el codigo de ciudad: ');
             readln(codCIUDAD);
             if buscarPosDico(codCIUDAD) then
             begin
                codECP[pos,3] := codCIUDAD;
             end
-            else if (codCiudad <> '*') then
+            else if (codCiudad <> '*') and ( codCiudad[1] = '') then
             begin
                cargaCiudad(codCIUDAD);
                codECP[pos,3] := codCIUDAD;
@@ -489,44 +443,37 @@ begin
                until buscarPosDico(codCIUDAD) = true;
                codECP[pos,3] := codCIUDAD;
             end;
-
             repeat
                writeln('Ingrese una de las siguientes etapas: PREVENTA (P), OBRA (O), TERMINADO (T) ');
                readln(etapa);
             until (etapa = 'P') or (etapa = 'O') or (etapa = 'T') or (etapa = 'p') or (etapa = 'o') or (etapa = 't');
             etapatipo[pos,1] := etapa;
-
             repeat
                writeln('Ingrese uno de los siguientes tipo: CASA(C), DEPARTAMENTO (D), OFICINA (O), LOTES (L) ');
                readln(tipo);
             until (tipo = 'C') or (tipo = 'O') or (tipo = 'L') or (tipo = 'D') or (tipo = 'c') or (tipo = 'o')or (tipo = 'l') or (tipo = 'd');
             etapatipo[pos,2] := tipo;
-
          end
          else if (codEMPRESA <> '*') and (cont <= 4) and (cont > 0) and (buscar(codEMPRESA,1) = false) then 
          begin
             writeln('El codigo de Empresa no existe, por favor ingrese dicha empresa a continuacion');
             cargaEmpresa(codEMPRESA, cont);
-            codECP[pos,2] := codEMPRESA;
-            codECP[pos,3] := codCIUDAD_GBL;
-
+            codEC[pos,2] := codEMPRESA;
             repeat
             writeln('Ingrese una de los siguientes etapas: PREVENTA (P), OBRA (O), TERMINADO (T) ');
                readln(etapa);
             until (etapa = 'P') or (etapa = 'O') or (etapa = 'T') or (etapa = 'p') or (etapa = 'o') or (etapa = 't');
             etapatipo[pos,1] := etapa;
-
             repeat
                writeln('Ingrese uno de los siguientes tipo: CASA(C), DEPARTAMENTO (D), OFICINA (O), LOTES (L) ');
                readln(tipo);
             until (tipo = 'C') or (tipo = 'O') or (tipo = 'D') or (tipo = 'L') or (tipo = 'o') or (tipo = 'd')or (tipo = 'c') or (tipo = 'l');
             etapatipo[pos,2] := tipo;
-
          end
          else if (cont = 0) or (cont > 4) then
          begin
             write('No es posible cargar dicha empresa');
-            writeln('Porfabor ingrese uno de los siguientes codigo de empresa: ');
+            writeln('Por favor ingrese uno de los siguientes codigo de empresa: ');
             for i := 1 to 4 do
             begin
                writeln(codEC[i,1]);
@@ -620,22 +567,22 @@ begin
       if (posicion <= 4) and (posicion > 0) then
       begin
          repeat
-            writeln('Ingrese el nombre y apellido del cliente');
+            writeln('Ingrese el nombre y apellido del cliente: ');
             readln(nombre);
             if validacion(nombre,1) then
             begin
-               writeln('Ingrese otro nombre');
+               write('Ingrese otro nombre: ');
             end;
          until (validacion(nombre,1) = false) and (posicion <= 4);
          if (nombre <>'*') and (posicion <= 4) and(posicion >0) then
          begin
             datosCli[posicion,1] := nombre;
             repeat
-               writeln('Ingrese el correo del cliente');
+               write('Ingrese el correo del cliente:');
                readln(mail);
                if validacion(mail,2) then
                begin
-                  writeln('Ingrese otro correo');
+                  write('Ingrese otro correo: ');
                end;
             until (validacion(mail,2) = false) and (mail <> '*');
             if (posicion <= 4) then
@@ -663,14 +610,14 @@ end;
 
 function buscarTipoDeProyecto(t : char): boolean;
 var
-   pos,j: integer;
+   j: integer;
    codEmp, codCiu: string[3];
    bandera, found:boolean;
 begin
    bandera := false;
    codEmp := '';
    codCiu := '';
-   for i := 1 to 3 do   //Debería ser un While, no un For
+   for i := 1 to 3 do
    begin
       if etapatipo[i,2] = t then
       begin
@@ -690,12 +637,12 @@ begin
          codEmp := codECP[i,2];
          codCiu := codECP[i,3];
 
-         //writeln('Codigo empresa: ', codECP[i,2]); //Esto era para probar si los códigos estaban cargados
-         //writeln('Codigo ciudad: ', codECP[i,3]);  //Esto era para probar si los códigos estaban cargados
+         writeln('Codigo empresa: ', codECP[i,2]);
+         writeln('Codigo ciudad: ', codECP[i,3]);
 
          j := 0;
          found := false;
-         while (found = false) and (j<=4) do
+         while found = false do
          begin
             j += 1;
             if codEC[j,1] = codEmp then
@@ -708,17 +655,17 @@ begin
          //Nombre de la Ciudad
          found := false;
          j := 0;
-         while (found = false) and (j<=4) do
+         while found = false do
          begin
             j += 1;
-            //writeln('Codigo en el array: ', codCiudad[j],' - Codigo a buscar: ', codCiu );
-            if codCiudad[j] = codCiu then
+            writeln('Codigo en el array: ', codCiudad[j],' - Codigo a buscar: ', codCiu );
+            if codCiudad[i] = codCiu then
             begin
                found := true;
                writeln('Nombre de la Ciudad: ', nomCiudad[j]);
             end;
          end;
-         readkey;
+
          //Retorno
          buscarTipoDeProyecto := bandera;   
       end;
